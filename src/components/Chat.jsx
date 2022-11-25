@@ -7,6 +7,7 @@ import Box from '@mui/material/Box'
 import Contact from './Contact';
 import Message from './Message';
 import SendMessage from './SendMessage';
+import NoContent from './NoContent';
 
 const Chat = ({chatId}) => {
     const [contact, setContact] = useState({});
@@ -51,7 +52,11 @@ const Chat = ({chatId}) => {
             }}
              className='conversation'
             >
-                {renderedMessages}
+                {
+                    messages.length > 0
+                    ? renderedMessages
+                    : <NoContent text='Start Messaging' />
+                }
             </Box>
             <SendMessage onMessageSend={onMessageSend} /> 
         </>

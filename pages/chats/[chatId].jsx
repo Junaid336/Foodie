@@ -1,4 +1,6 @@
 import  Chat from '../../src/components/Chat';
+import LoginPage from '../../src/components/LoginPage';
+import NoContent from '../../src/components/NoContent';
 
 const chat = ({isLogin, chatId}) => {
     if(isLogin)
@@ -7,10 +9,10 @@ const chat = ({isLogin, chatId}) => {
                 {
                     return <Chat chatId={chatId} />
                 }
-            return <div>no chat</div>
+            return <NoContent text='Chat Not Found' />
         }
 
-    return <div>Login First</div>
+    return <LoginPage />
 }
 
 chat.getInitialProps = ({query}) => {

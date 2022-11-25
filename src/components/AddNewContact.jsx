@@ -4,6 +4,7 @@ import { searchUser, createNewChat } from '../Firebase';
 
 import Search from './Search';
 import ContactList from './ContactList';
+import NoContent from './NoContent';
 
 const AddNewContact = () => {
 
@@ -23,10 +24,14 @@ const AddNewContact = () => {
     return(
         <>
             <Search onSearchTermChange={onSearchTermChange} />
-            <ContactList
-            contacts={results}
-            onContactClick={onContactClick}
-            />
+            {
+                results.length > 0
+                ? <ContactList
+                    contacts={results}
+                    onContactClick={onContactClick}
+                    />
+                : <NoContent text='No Results' />
+            }
         </>
     )
 }

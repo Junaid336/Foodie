@@ -112,7 +112,7 @@ export const loadContacts = async (setResults) => {
   snapshot.forEach((doc)=>console.log(doc.data()))
 
   setResults(snapshot.docs.map(doc => doc.data()));
-  console.log('loaded');
+  console.log(snapshot);
 }
 
 export const writeMessage = async (messageText, chatId) => {

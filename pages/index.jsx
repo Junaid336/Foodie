@@ -1,17 +1,22 @@
+import Image from 'next/image';
 
-import Todo from '../src/components/Todo';
-import LoginButton from '../src/components/LoginButton';
-
-const TODO = {
-    status: 'pending',
-    text: 'Display Todo'
-}
+import LoginPage from '../src/components/LoginPage';
 
 const Index = ({isLogin}) => {
 
     return (
         <>  
-            <LoginButton />
+            {
+                isLogin
+                ? <Image
+                 src='/images/messaging.jpg'
+                 layout='fill'
+                 />
+                : <div>
+                    <LoginPage />
+                </div>
+            }
+            
         </>
     );
 }

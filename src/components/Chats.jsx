@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 import Search from './Search'
 import ContactList from './ContactList';
+import NoContent from './NoContent';
 
 const Chats = () => {
     const router = useRouter();
@@ -44,10 +45,14 @@ const Chats = () => {
     return(
             <>
                 <Search onSearchTermChange={onSearchTermChange} />
-                <ContactList
-                contacts={filteredResults}
-                onContactClick={onContactClick}
-                />
+                {
+                    filteredResults.length > 0
+                    ? <ContactList
+                        contacts={filteredResults}
+                        onContactClick={onContactClick}
+                        />
+                    : <NoContent text='No Chats Yet'/>
+                }
                 <Fab
                     color="primary" 
                     aria-label="add"

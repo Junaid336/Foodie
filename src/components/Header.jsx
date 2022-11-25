@@ -20,10 +20,6 @@ import {signIn, signOutUser} from '../Firebase';
 
 const pages = [
   {
-  name:'Todos',
-  linkTo: '/'
-  },
-  {
     name:'Messaging',
     linkTo: '/chats'
   }
