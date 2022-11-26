@@ -9,23 +9,27 @@ import Message from './Message';
 import SendMessage from './SendMessage';
 import NoContent from './NoContent';
 
+
 const Chat = ({chatId}) => {
     const [contact, setContact] = useState({});
     const [messages, setMessages] = useState([]);
+
+    const load = async() =>{
+        await Promise.all([
+            loadContactByChatId(chatId, setContact),
+            loadMessages(chatId, setMessages, messages)
+        ]);
+    }
+
     useEffect(()=>{
-        const load = async() =>{
-            await Promise.all([
-                loadContactByChatId(chatId, setContact),
-                loadMessages(chatId, setMessages, messages)
-            ]);
-        }
         load();
     }, []);
 
-    const renderedMessages = messages.map((message)=>(
+    const renderedMessages = messages.map((message,index)=>(
         <Message
          myMessage={message.uid === auth.currentUser.uid}
          text={message.text}
+         key={index}
         />
     ))
 

@@ -11,6 +11,7 @@ const Index = ({isLogin}) => {
                 ? <Image
                  src='/images/messaging.jpg'
                  layout='fill'
+                 alt=''
                  />
                 : <div>
                     <LoginPage />
