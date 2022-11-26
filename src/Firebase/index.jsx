@@ -22,7 +22,7 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyDSeeasHQVX641bD53MNpcYcEkeiF8QGJo",
-  authDomain: "fire-chat-7.firebaseapp.com",
+  authDomain: "fire-next-omega.vercel.app/",
   projectId: "fire-chat-7",
   storageBucket: "fire-chat-7.appspot.com",
   messagingSenderId: "506301287580",
