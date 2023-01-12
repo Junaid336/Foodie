@@ -1,5 +1,6 @@
+import Link from "next/link";
 
-const OptionCard = ({title, description, img}) => {
+const OptionCard = ({title, description, img, linkTo}) => {
     return(
         <div className="card" style={{ background: `url(${img})`,backgroundSize:'cover',backgroundRepeat:'no-repeat', width: "18rem",  padding: '2rem', color:'white' }} >
             <div className="card-body">
@@ -7,9 +8,11 @@ const OptionCard = ({title, description, img}) => {
                 <p className="card-text">
                     {description}
                 </p>
-                <a href="#" className="btn btn-primary" style={{backgroundColor: '#ff3300'}}>
-                    Go
-                </a>
+                <Link href={linkTo}>
+                    <button className="btn btn-primary" style={{backgroundColor: '#ff3300'}}>
+                        Go
+                    </button>
+                </Link>
             </div>
         </div>
 

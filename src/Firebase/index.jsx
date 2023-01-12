@@ -79,10 +79,10 @@ export const createCart = async () => {
     return docRef.id;
 }
 
-export const uploadImage = async (imageFile, productId) => {
+export const uploadImage = async (imageFile, id, folder='productImages') => {
 
     // Create a child reference with a unique name
-    const imageRef = ref(storage,`productImages/${productId}/${imageFile.name}`);
+    const imageRef = ref(storage,`${folder}/${id}/${imageFile.name}`);
     // Upload the file to the storage reference
     const snapshot = await uploadBytes(imageRef, imageFile);
     // Get the download URL for the image
@@ -118,4 +118,10 @@ export const loadPopular = async () => {
         id: doc.id,
         ...doc.data()
     }})
+}
+
+export const addRestaurantOwner = async (data, id) => {
+    const {restaurantImage, ...newData} = data;
+    const url = await uploadImage(restaurantImage,id,'restaurantImages')
+    await setDoc(doc(db, "restaurantOwners", id), {...newData, restaurantImage: url});
 }

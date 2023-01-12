@@ -1,6 +1,6 @@
 import React from "react";
 
-const FoodItem = ({name, shortName, price, img, rating, reviews, restaurant, address, hearts}) => {
+const FoodItem = ({name, description, price, imgUrl, rating, reviews, restaurant, address, hearts}) => {
 
     const ratingStars = Array.from({length:5},(v, index)=>{
         return(
@@ -16,7 +16,7 @@ const FoodItem = ({name, shortName, price, img, rating, reviews, restaurant, add
             <div className="food-item-wrap">
                 <div
                     className="figure-wrap bg-image"
-                    data-image-src={img}
+                    data-image-src={imgUrl}
                 >
 
                     <div className="rating pull-left">
@@ -30,7 +30,7 @@ const FoodItem = ({name, shortName, price, img, rating, reviews, restaurant, add
                 </div>
                 <div className="content">
                     <h5>
-                        <a href="#">{shortName}</a>
+                        <a href="#">{description}</a>
                     </h5>
                     <div className="product-name">{name}</div>
                     <div className="price-btn-block">

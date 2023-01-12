@@ -1,6 +1,10 @@
 import React, { useState } from "react";
-import Modal from "../../src/components/Modal";
 import Form from "../../src/components/Form";
+
+import PageWrapper from "../../src/layouts/PageWrapper";
+import Modal from '../../src/components/Modal'
+import ModalContent from "../../src/components/ModalContent";
+
 import { addNewProduct } from "../../src/Firebase";
 
 
@@ -54,20 +58,17 @@ const AddProduct = () => {
             description: e.target.elements.description.value,
         }
 
-        console.log(data);
+        addNewProduct(data)
+        setShowModal(true)
     }
 
     return (
-        <>
+        <PageWrapper>
         <Form fieldsGroups={fieldsGroups} btnTxt='AddProduct' handleSubmit={handleSubmit} />
-        <button onClick={() => setShowModal(true)}>Open Modal</button>
-        <Modal
-            onClose={() => setShowModal(false)}
-            show={showModal}
-        >
-            Hello from the modal!
+        <Modal open={showModal} onClose={() => setShowModal(false)}>
+            <ModalContent title='Success' body='Item Added Successfully' linkTo='/restaurant' btnTxt='Done' />
         </Modal>
-        </>
+        </PageWrapper>
     );
 }
 
