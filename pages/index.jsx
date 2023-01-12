@@ -1,23 +1,14 @@
-import Image from 'next/image';
+import Banner from "../src/components/Banner";
+import Popular from "../src/components/Popular";
+import ReservationGuide from "../src/components/ReservationGuide";
 
-import LoginPage from '../src/components/LoginPage';
-
-const Index = ({isLogin}) => {
+const Index = () => {
 
     return (
         <>  
-            {
-                isLogin
-                ? <Image
-                 src='/images/messaging.jpg'
-                 layout='fill'
-                 alt=''
-                 />
-                : <div>
-                    <LoginPage />
-                </div>
-            }
-            
+           <Banner />
+           <Popular />
+           <ReservationGuide />
         </>
     );
 }

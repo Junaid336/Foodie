@@ -1,45 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState} from "react";
+import Link from "next/link";
 
-import InputAdornment from '@mui/material/InputAdornment';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-
-
-const Search = ({onSearchTermChange}) => {
-    const  [value, setValue] = useState('');
-    const [debouncedValue, setDebouncedValue] = useState(value);
-
-    useEffect(()=>{
-        const timer = setTimeout(() => {
-            setDebouncedValue(value)
-        }, 500);
-
-        return ()=>clearTimeout(timer);
-    }, [value]);
-
-    useEffect(()=>{
-      const search = async (searchTerm) => { await onSearchTermChange(searchTerm);}
-
-        if (debouncedValue)
-            search(debouncedValue);
-    }, [debouncedValue])
-
-    return(
-        <TextField
-        label="Search"
-        value={value}
-        fullWidth
-        onChange={(e)=>setValue(e.target.value.trim())}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-        variant="standard"
-      />
-    )
+const Search = ({onClick, btnTxt='Search Food'}) => {
+    const [value, setValue] = useState('')
+    return (
+        <form className="form-inline">
+            <div className="form-group">
+                <label className="sr-only">
+                    I would like to eat....
+                </label>
+                <div className="form-group">
+                    <input
+                        type="text"
+                        className="form-control form-control-lg"
+                        placeholder="I would like to eat...."
+                        value={value}
+                        onChange={(e)=>setValue(e.target.value)}
+                    />{" "}
+                </div>
+            </div>
+            <Link href='/SearchResutls'>
+            <button
+                onClick={onClick}
+                type="button"
+                className="btn theme-btn btn-lg"
+            >
+                {btnTxt}
+            </button>
+            </Link>
+        </form>
+    );
 }
 
 export default Search;

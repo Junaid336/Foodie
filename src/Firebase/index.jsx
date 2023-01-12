@@ -1,144 +1,121 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { 
-  collection,
-  addDoc,
-  getDocs,
-  setDoc,
-  doc,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  serverTimestamp
-} from "firebase/firestore";
-import {
-   getAuth,
-   onAuthStateChanged,
-   GoogleAuthProvider,
-   signInWithPopup,
-   signOut,
- } from 'firebase/auth';
+import { getFirestore, collection, addDoc, doc, setDoc, query, limit, getDocs } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDSeeasHQVX641bD53MNpcYcEkeiF8QGJo",
-  authDomain: "fire-chat-7.firebaseapp.com",
-  projectId: "fire-chat-7",
-  storageBucket: "fire-chat-7.appspot.com",
-  messagingSenderId: "506301287580",
-  appId: "1:506301287580:web:459638bcdc90455c73f159",
-  measurementId: "G-PYWWVD11MZ"
+    apiKey: "AIzaSyCpr4VzqjRgU7w8l4GPouCZiSBK4LOmgWM",
+    authDomain: "foodie-fb2c7.firebaseapp.com",
+    projectId: "foodie-fb2c7",
+    storageBucket: "foodie-fb2c7.appspot.com",
+    messagingSenderId: "682667864999",
+    appId: "1:682667864999:web:20eb1bc9ebf72f8456fc82",
+    measurementId: "G-680T44RM7Q",
+    storageBucket: 'gs://foodie-fb2c7.appspot.com'
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const db = getFirestore();
+const storage = getStorage(firebaseApp);
 export const auth = getAuth();
 
-export const  signIn = async () => {
-  const provider = new GoogleAuthProvider();
-  await signInWithPopup(auth, provider);
-  //console.log(getAuth().currentUser);
-  await setDoc(doc(db, 'users', auth.currentUser.uid),{
-    name: auth.currentUser.displayName,
-    photoUrl: `${addSizeToGoogleProfilePic(auth.currentUser.photoURL)}`,
-    lowercaseName: auth.currentUser.displayName.toLowerCase()
-   }, {merge: true} );
+export const SignUp = async (password, data, add, cartFunction = null) => {
+
+    createUserWithEmailAndPassword(auth, data.email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            console.log(user)
+            if(cartFunction != null){
+                cartFunction().then((id)=>{
+                    add({...data, cartId: id}, userCredential.user.uid)
+                })
+            } else {
+                add(data, userCredential.user.uid)
+            }
+                
+            
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode,errorMessage)
+    });
 }
 
-export const signOutUser = () =>{
-  signOut(auth);
+export const SignIn = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            // ...
+            console.log(user)
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage)
+        });
 }
 
-export const  isSignedIn = () => {
-  return !!auth.currentUser;
+export const addCustomer = async (data, id) => {
+    await setDoc(doc(db, "customers", id), data);
 }
 
-export const addSizeToGoogleProfilePic = url => {
-   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-     return url + '?sz=150';
-   }
-   return url;
- }
-
-
- export const searchUser = async (searchTerm, setResults) => {
-  searchTerm = searchTerm.toLowerCase();
-  let strlength = searchTerm.length;
-  let strFrontCode = searchTerm.slice(0, strlength-1);
-  let strEndCode = searchTerm.slice(strlength-1, searchTerm.length);
-  
-  let endCode = strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1)
-  const usersRef = collection(db, 'users');
-  let q = query(usersRef, where('lowercaseName', '>=', searchTerm), where('lowercaseName', '<', endCode) );
-
-  const querySnapshot = await getDocs(q);
-  
-  setResults(querySnapshot.docs.map(doc => ({ uid:doc.id, ...doc.data() })));
- }
-
- export const createNewChat = async (user) => {
-  const chatRefsRef = collection(db, 'users', auth.currentUser.uid, 'chatRefs');
-  const q = query(chatRefsRef, where('uid', '==' , `${user.uid}`));
-
-  const snapshot = await getDocs(q);
-  if(!snapshot.exist){
-    const newChatId = `chat-${auth.currentUser.uid}-${user.uid}`;
-    const otherChatRefsRef = collection(db, 'users', `${user.uid}`, 'chatRefs');
-    await Promise.all([
-      addDoc(chatRefsRef, {
-        uid: `${user.uid}`,
-        photoUrl: `${user.photoUrl}`,
-        chatId: newChatId,
-        name: `${user.name}`,
-        lowercaseName: `${user.lowercaseName}`
-      }),
-      addDoc(otherChatRefsRef, {
-        uid: `${auth.currentUser.uid}`,
-        photoUrl: `${addSizeToGoogleProfilePic(auth.currentUser.photoURL)}`,
-        chatId: newChatId,
-        name: `${auth.currentUser.displayName}`,
-        lowercaseName: `${auth.currentUser.displayName.toLowerCase()}`
-      })
-  ]);
-    return newChatId;
-  } else {
-    return snapshot.docx[0].id;
-  }
-
- }
-
-export const loadContacts = async (setResults) => {
-  const snapshot = await getDocs(collection(db, 'users', auth.currentUser.uid, 'chatRefs'));
-  snapshot.forEach((doc)=>console.log(doc.data()))
-
-  setResults(snapshot.docs.map(doc => doc.data()));
-  console.log(snapshot);
+export const SignOut = () => {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+        // Sign-out successful.
+        console.log('signed out')
+    }).catch((error) => {
+        // An error happened.
+        console.log(error)
+    });
 }
 
-export const writeMessage = async (messageText, chatId) => {
-  await addDoc(collection(db, 'chats', chatId, 'messages'), {
-    text: `${messageText}`,
-    uid: `${auth.currentUser.uid}`,
-    timestamp: serverTimestamp()
-  })
+export const createCart = async () => {
+    const docRef = await addDoc(collection(db, 'carts'),{})
+    return docRef.id;
 }
 
-export const loadMessages = (chatId, setMessages, messages) => {
-  const messagesRef = collection(db, 'chats', chatId, 'messages');
-  const messagesQuery = query(messagesRef, orderBy('timestamp', 'desc'));
-  onSnapshot(messagesQuery, (snapshot)=>{
-     console.log(snapshot);
-     setMessages( snapshot.docs.map((doc)=>{
-      return doc.data();
-     }) );
-  });
+export const uploadImage = async (imageFile, productId) => {
+
+    // Create a child reference with a unique name
+    const imageRef = ref(storage,`productImages/${productId}/${imageFile.name}`);
+    // Upload the file to the storage reference
+    const snapshot = await uploadBytes(imageRef, imageFile);
+    // Get the download URL for the image
+    const url = await getDownloadURL(snapshot.ref)
+    return url;
 }
 
-export const loadContactByChatId = async (chatId, setContact) => {
- const chatRefsRef = collection(db, 'users', auth.currentUser.uid, 'chatRefs');
- const q = query(chatRefsRef, where('chatId', '==' , `${chatId}`));
+export const addNewProduct = async (formData) => {
 
- const snapshot = await getDocs(q);
- 
- setContact(snapshot.docs[0].data());
+    const newProduct = {
+        productName: formData.productName,
+        type: formData.type,
+        category: formData.category,
+        price: formData.price,
+        description: formData.description
+    };
+
+    console.log(newProduct);
+
+    const docRef = await addDoc(collection(db, "items"), newProduct);
+    
+    const url = await uploadImage(formData.imageFile, docRef.id);
+
+    await setDoc(docRef, {
+       imageUrl: url
+    }, { merge: true });
+}
+
+export const loadPopular = async () => {
+    const q = query(collection(db, items), limit(3));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc)=>{ return {
+        id: doc.id,
+        ...doc.data()
+    }})
 }
